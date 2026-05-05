@@ -1,6 +1,7 @@
 import { ipcMain, dialog } from 'electron';
 import { novelDao, volumeDao, chapterDao, snapshotDao } from '@novel-writer/core';
 import { exportTxt, exportEpub } from '@novel-writer/export';
+import { verifyLicense, saveLicense, loadLicense, isActivated, clearLicense } from './license.js';
 
 export function registerIpcHandlers(): void {
   // Novel CRUD
@@ -29,6 +30,16 @@ export function registerIpcHandlers(): void {
   // Snapshot
   ipcMain.handle('snapshot:create', (_e, chapterId: string, content: string) => snapshotDao.create(chapterId, content));
   ipcMain.handle('snapshot:getByChapter', (_e, chapterId: string) => snapshotDao.getByChapter(chapterId));
+
+  // License
+  ipcMain.handle('license:verify', (_e, key: string) => verifyLicense(key));
+  ipcMain.handle('license:save', (_e, key: string, email?: string) => {
+    saveLicense(key, email);
+    return { success: true };
+  });
+  ipcMain.handle('license:load', () => loadLicense());
+  ipcMain.handle('license:isActivated', () => isActivated());
+  ipcMain.handle('license:clear', () => { clearLicense(); return { success: true }; });
 
   // Export
   ipcMain.handle('export:txt', async () => {

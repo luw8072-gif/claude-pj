@@ -32,4 +32,11 @@ contextBridge.exposeInMainWorld('novelWriter', {
     txt: () => ipcRenderer.invoke('export:txt'),
     epub: () => ipcRenderer.invoke('export:epub'),
   },
+  license: {
+    verify: (key: string) => ipcRenderer.invoke('license:verify', key),
+    save: (key: string, email?: string) => ipcRenderer.invoke('license:save', key, email),
+    load: () => ipcRenderer.invoke('license:load'),
+    isActivated: () => ipcRenderer.invoke('license:isActivated'),
+    clear: () => ipcRenderer.invoke('license:clear'),
+  },
 });

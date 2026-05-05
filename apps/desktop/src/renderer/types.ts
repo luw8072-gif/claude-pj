@@ -32,6 +32,13 @@ export interface NovelWriterAPI {
     txt: () => Promise<{ success: boolean; filePath?: string; error?: string }>;
     epub: () => Promise<{ success: boolean; filePath?: string; error?: string }>;
   };
+  license: {
+    verify: (key: string) => Promise<{ valid: boolean; message: string }>;
+    save: (key: string, email?: string) => Promise<{ success: boolean }>;
+    load: () => Promise<{ key: string; activatedAt: string; email?: string } | null>;
+    isActivated: () => Promise<boolean>;
+    clear: () => Promise<{ success: boolean }>;
+  };
 }
 
 declare global {
