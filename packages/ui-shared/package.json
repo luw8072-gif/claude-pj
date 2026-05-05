@@ -1,0 +1,10 @@
+{
+  "name": "@novel-writer/ui-shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc && cp src/globals.css dist/globals.css", "dev": "tsc --watch" },
+  "dependencies": { "react": "^19.0.0" }
+}

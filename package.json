@@ -1,0 +1,17 @@
+{
+  "name": "novel-writer",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/desktop",
+    "build": "npm run build -w packages/core && npm run build -w packages/ui-shared && npm run build -w packages/editor && npm run build -w packages/export && npm run build -w apps/desktop",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

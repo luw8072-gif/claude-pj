@@ -1,0 +1,51 @@
+import { app, BrowserWindow } from 'electron';
+import path from 'path';
+import { runMigrations, closeDb, getDb } from '@novel-writer/core';
+import { registerIpcHandlers } from './ipc.js';
+
+let mainWindow: BrowserWindow | null = null;
+
+function createWindow(): void {
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 800,
+    minWidth: 900,
+    minHeight: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+    titleBarStyle: 'hiddenInset',
+    show: false,
+  });
+
+  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
+  });
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+}
+
+app.whenReady().then(() => {
+  runMigrations(getDb());
+  registerIpcHandlers();
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on('window-all-closed', () => {
+  closeDb();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

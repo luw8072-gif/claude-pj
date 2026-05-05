@@ -1,0 +1,67 @@
+{
+  "skillListingMaxDescChars": 300,
+  "skillListingBudgetFraction": 0.005,
+  "env": {
+    "ANTHROPIC_API_KEY": "sk-8da7f78f86054daf8899429fa27c9687",
+    "ANTHROPIC_AUTH_TOKEN": "sk-8da7f78f86054daf8899429fa27c9687",
+    "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(powershell *)",
+      "Bash(git *)",
+      "Bash(npm install *)",
+      "Bash(bun *)",
+      "Bash(python *)",
+      "Bash(where *)",
+      "Bash(dir *)",
+      "Bash(grep *)",
+      "Bash(findstr *)",
+      "Bash(chcp *)",
+      "Bash(cmd.exe *)",
+      "Bash(taskkill *)",
+      "Bash(tasklist *)",
+      "Bash(ps *)",
+      "Bash(wmic *)",
+      "Bash(set)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Read(//d/D/**)",
+      "Read(//c/Users/lww/AppData/Roaming/Claude//**)",
+      "Read(//c/Users/lww/AppData/Local/AnthropicClaude//**)",
+      "Read(//c/Users/lww/.claude/memory/**)",
+      "Write(//c/Users/lww/.claude/memory/**)",
+      "Bash(cargo build *)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "wechat"
+  ],
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"D:\\claude\\load-memory.ps1\"",
+            "timeout": 10,
+            "statusMessage": "加载长期记忆..."
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"D:\\claude\\save-memory.ps1\"",
+            "timeout": 10,
+            "statusMessage": "保存会话记忆..."
+          }
+        ]
+      }
+    ]
+  }
+}
