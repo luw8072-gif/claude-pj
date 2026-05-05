@@ -13,6 +13,13 @@ const migrations: Migration[] = [
 ];
 
 export function runMigrations(db: Database.Database): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS migrations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      run_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
   const applied = new Set(
     db.prepare('SELECT name FROM migrations').all().map((r: any) => r.name)
   );
