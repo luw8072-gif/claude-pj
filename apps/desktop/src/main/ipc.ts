@@ -1,5 +1,5 @@
 import { ipcMain, dialog } from 'electron';
-import { novelDao, volumeDao, chapterDao, snapshotDao } from '@novel-writer/core';
+import { novelDao, volumeDao, chapterDao, snapshotDao, characterDao, characterRelationDao, worldEntryDao, entryLinkDao, writingGoalDao } from '@novel-writer/core';
 import { exportTxt, exportEpub } from '@novel-writer/export';
 import { verifyLicense, saveLicense, loadLicense, isActivated, clearLicense } from './license.js';
 
@@ -30,6 +30,43 @@ export function registerIpcHandlers(): void {
   // Snapshot
   ipcMain.handle('snapshot:create', (_e, chapterId: string, content: string) => snapshotDao.create(chapterId, content));
   ipcMain.handle('snapshot:getByChapter', (_e, chapterId: string) => snapshotDao.getByChapter(chapterId));
+  ipcMain.handle('snapshot:getById', (_e, id: string) => snapshotDao.getById(id));
+
+  // Character CRUD
+  ipcMain.handle('character:create', (_e, novelId: string, name: string) => characterDao.create(novelId, name));
+  ipcMain.handle('character:getByNovel', (_e, novelId: string) => characterDao.getByNovel(novelId));
+  ipcMain.handle('character:getById', (_e, id: string) => characterDao.getById(id));
+  ipcMain.handle('character:update', (_e, id: string, data) => characterDao.update(id, data as any));
+  ipcMain.handle('character:delete', (_e, id: string) => characterDao.delete(id));
+  ipcMain.handle('character:reorder', (_e, ids: string[]) => characterDao.reorder(ids));
+
+  // Character Relation CRUD
+  ipcMain.handle('characterRelation:create', (_e, novelId: string, from: string, to: string, type: string, desc?: string) =>
+    characterRelationDao.create(novelId, from, to, type, desc));
+  ipcMain.handle('characterRelation:getByNovel', (_e, novelId: string) => characterRelationDao.getByNovel(novelId));
+  ipcMain.handle('characterRelation:getByCharacter', (_e, charId: string) => characterRelationDao.getByCharacter(charId));
+  ipcMain.handle('characterRelation:update', (_e, id: string, data) => characterRelationDao.update(id, data as any));
+  ipcMain.handle('characterRelation:delete', (_e, id: string) => characterRelationDao.delete(id));
+
+  // World Entry CRUD
+  ipcMain.handle('worldEntry:create', (_e, novelId: string, name: string, category?: string) => worldEntryDao.create(novelId, name, category));
+  ipcMain.handle('worldEntry:getByNovel', (_e, novelId: string) => worldEntryDao.getByNovel(novelId));
+  ipcMain.handle('worldEntry:getByCategory', (_e, novelId: string, category: string) => worldEntryDao.getByCategory(novelId, category));
+  ipcMain.handle('worldEntry:getById', (_e, id: string) => worldEntryDao.getById(id));
+  ipcMain.handle('worldEntry:update', (_e, id: string, data) => worldEntryDao.update(id, data as any));
+  ipcMain.handle('worldEntry:delete', (_e, id: string) => worldEntryDao.delete(id));
+
+  // Entry Link CRUD
+  ipcMain.handle('entryLink:create', (_e, fromId: string, toId: string, type?: string) => entryLinkDao.create(fromId, toId, type));
+  ipcMain.handle('entryLink:getByEntry', (_e, entryId: string) => entryLinkDao.getByEntry(entryId));
+  ipcMain.handle('entryLink:delete', (_e, id: string) => entryLinkDao.delete(id));
+
+  // Writing Goal CRUD
+  ipcMain.handle('writingGoal:createOrUpdate', (_e, novelId: string, date: string, target: number) => writingGoalDao.createOrUpdate(novelId, date, target));
+  ipcMain.handle('writingGoal:getByNovel', (_e, novelId: string) => writingGoalDao.getByNovel(novelId));
+  ipcMain.handle('writingGoal:getByDate', (_e, novelId: string, date: string) => writingGoalDao.getByDate(novelId, date));
+  ipcMain.handle('writingGoal:updateActualCount', (_e, id: string, count: number) => writingGoalDao.updateActualCount(id, count));
+  ipcMain.handle('writingGoal:delete', (_e, id: string) => writingGoalDao.delete(id));
 
   // License
   ipcMain.handle('license:verify', (_e, key: string) => verifyLicense(key));

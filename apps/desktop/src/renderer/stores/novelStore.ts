@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Novel, Volume, Chapter } from '@novel-writer/core';
+import type { Novel, Volume, Chapter, Snapshot, Character, CharacterRelation, WorldEntry, EntryLink, WritingGoal } from '@novel-writer/core';
 
 interface NovelState {
   novels: Novel[];
@@ -9,6 +9,13 @@ interface NovelState {
   currentChapterId: string | null;
   currentChapter: Chapter | null;
   loading: boolean;
+  characters: Character[];
+  characterRelations: CharacterRelation[];
+  worldEntries: WorldEntry[];
+  entryLinks: EntryLink[];
+  writingGoals: WritingGoal[];
+  snapshots: Snapshot[];
+  activeSidebarTab: 'toc' | 'characters' | 'world' | 'snapshots';
 
   loadNovels: () => Promise<void>;
   createNovel: (title: string) => Promise<Novel>;
@@ -19,6 +26,20 @@ interface NovelState {
   selectChapter: (chapterId: string) => Promise<void>;
   updateChapterContent: (content: string) => Promise<void>;
   deleteChapter: (chapterId: string) => Promise<void>;
+  loadCharacters: (novelId: string) => Promise<void>;
+  createCharacter: (name: string) => Promise<void>;
+  updateCharacter: (id: string, data: Partial<Character>) => Promise<void>;
+  deleteCharacter: (id: string) => Promise<void>;
+  addCharacterRelation: (fromId: string, toId: string, type: string, desc?: string) => Promise<void>;
+  deleteCharacterRelation: (id: string) => Promise<void>;
+  loadWorldEntries: (novelId: string) => Promise<void>;
+  createWorldEntry: (name: string, category?: string) => Promise<void>;
+  updateWorldEntry: (id: string, data: Partial<WorldEntry>) => Promise<void>;
+  deleteWorldEntry: (id: string) => Promise<void>;
+  loadWritingGoals: (novelId: string) => Promise<void>;
+  setWritingGoal: (date: string, target: number) => Promise<void>;
+  loadSnapshots: (chapterId: string) => Promise<void>;
+  setActiveSidebarTab: (tab: 'toc' | 'characters' | 'world' | 'snapshots') => void;
 }
 
 export const useNovelStore = create<NovelState>((set, get) => ({
@@ -29,6 +50,13 @@ export const useNovelStore = create<NovelState>((set, get) => ({
   currentChapterId: null,
   currentChapter: null,
   loading: false,
+  characters: [],
+  characterRelations: [],
+  worldEntries: [],
+  entryLinks: [],
+  writingGoals: [],
+  snapshots: [],
+  activeSidebarTab: 'toc',
 
   loadNovels: async () => {
     const novels = await window.novelWriter.novel.getAll();
@@ -107,5 +135,87 @@ export const useNovelStore = create<NovelState>((set, get) => ({
         return;
       }
     }
+  },
+
+  loadCharacters: async (novelId: string) => {
+    const characters = await window.novelWriter.character.getByNovel(novelId);
+    const characterRelations = await window.novelWriter.characterRelation.getByNovel(novelId);
+    set({ characters, characterRelations });
+  },
+
+  createCharacter: async (name: string) => {
+    const { currentNovel, characters } = get();
+    if (!currentNovel) return;
+    const character = await window.novelWriter.character.create(currentNovel.id, name);
+    set({ characters: [...characters, character] });
+  },
+
+  updateCharacter: async (id: string, data: Partial<Character>) => {
+    await window.novelWriter.character.update(id, data);
+    const { characters } = get();
+    set({ characters: characters.map(c => c.id === id ? { ...c, ...data } : c) });
+  },
+
+  deleteCharacter: async (id: string) => {
+    await window.novelWriter.character.delete(id);
+    const { characters } = get();
+    set({ characters: characters.filter(c => c.id !== id) });
+  },
+
+  addCharacterRelation: async (fromId: string, toId: string, type: string, desc?: string) => {
+    const { currentNovel } = get();
+    if (!currentNovel) return;
+    await window.novelWriter.characterRelation.create(currentNovel.id, fromId, toId, type, desc);
+    const characterRelations = await window.novelWriter.characterRelation.getByNovel(currentNovel.id);
+    set({ characterRelations });
+  },
+
+  deleteCharacterRelation: async (id: string) => {
+    await window.novelWriter.characterRelation.delete(id);
+    set({ characterRelations: get().characterRelations.filter(r => r.id !== id) });
+  },
+
+  loadWorldEntries: async (novelId: string) => {
+    const entries = await window.novelWriter.worldEntry.getByNovel(novelId);
+    set({ worldEntries: entries });
+  },
+
+  createWorldEntry: async (name: string, category?: string) => {
+    const { currentNovel, worldEntries } = get();
+    if (!currentNovel) return;
+    const entry = await window.novelWriter.worldEntry.create(currentNovel.id, name, category);
+    set({ worldEntries: [...worldEntries, entry] });
+  },
+
+  updateWorldEntry: async (id: string, data: Partial<WorldEntry>) => {
+    await window.novelWriter.worldEntry.update(id, data);
+    set({ worldEntries: get().worldEntries.map(e => e.id === id ? { ...e, ...data } : e) });
+  },
+
+  deleteWorldEntry: async (id: string) => {
+    await window.novelWriter.worldEntry.delete(id);
+    set({ worldEntries: get().worldEntries.filter(e => e.id !== id) });
+  },
+
+  loadWritingGoals: async (novelId: string) => {
+    const goals = await window.novelWriter.writingGoal.getByNovel(novelId);
+    set({ writingGoals: goals });
+  },
+
+  setWritingGoal: async (date: string, target: number) => {
+    const { currentNovel } = get();
+    if (!currentNovel) return;
+    await window.novelWriter.writingGoal.createOrUpdate(currentNovel.id, date, target);
+    const writingGoals = await window.novelWriter.writingGoal.getByNovel(currentNovel.id);
+    set({ writingGoals });
+  },
+
+  loadSnapshots: async (chapterId: string) => {
+    const snapshots = await window.novelWriter.snapshot.getByChapter(chapterId);
+    set({ snapshots });
+  },
+
+  setActiveSidebarTab: (tab: 'toc' | 'characters' | 'world' | 'snapshots') => {
+    set({ activeSidebarTab: tab });
   },
 }));

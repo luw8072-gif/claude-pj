@@ -27,6 +27,43 @@ contextBridge.exposeInMainWorld('novelWriter', {
   snapshot: {
     create: (chapterId: string, content: string) => ipcRenderer.invoke('snapshot:create', chapterId, content),
     getByChapter: (chapterId: string) => ipcRenderer.invoke('snapshot:getByChapter', chapterId),
+    getById: (id: string) => ipcRenderer.invoke('snapshot:getById', id),
+  },
+  character: {
+    create: (novelId: string, name: string) => ipcRenderer.invoke('character:create', novelId, name),
+    getByNovel: (novelId: string) => ipcRenderer.invoke('character:getByNovel', novelId),
+    getById: (id: string) => ipcRenderer.invoke('character:getById', id),
+    update: (id: string, data: Record<string, unknown>) => ipcRenderer.invoke('character:update', id, data),
+    delete: (id: string) => ipcRenderer.invoke('character:delete', id),
+    reorder: (ids: string[]) => ipcRenderer.invoke('character:reorder', ids),
+  },
+  characterRelation: {
+    create: (novelId: string, fromCharId: string, toCharId: string, relationType: string, description?: string) =>
+      ipcRenderer.invoke('characterRelation:create', novelId, fromCharId, toCharId, relationType, description),
+    getByNovel: (novelId: string) => ipcRenderer.invoke('characterRelation:getByNovel', novelId),
+    getByCharacter: (characterId: string) => ipcRenderer.invoke('characterRelation:getByCharacter', characterId),
+    update: (id: string, data: Record<string, unknown>) => ipcRenderer.invoke('characterRelation:update', id, data),
+    delete: (id: string) => ipcRenderer.invoke('characterRelation:delete', id),
+  },
+  worldEntry: {
+    create: (novelId: string, name: string, category?: string) => ipcRenderer.invoke('worldEntry:create', novelId, name, category),
+    getByNovel: (novelId: string) => ipcRenderer.invoke('worldEntry:getByNovel', novelId),
+    getByCategory: (novelId: string, category: string) => ipcRenderer.invoke('worldEntry:getByCategory', novelId, category),
+    getById: (id: string) => ipcRenderer.invoke('worldEntry:getById', id),
+    update: (id: string, data: Record<string, unknown>) => ipcRenderer.invoke('worldEntry:update', id, data),
+    delete: (id: string) => ipcRenderer.invoke('worldEntry:delete', id),
+  },
+  entryLink: {
+    create: (fromEntryId: string, toEntryId: string, linkType?: string) => ipcRenderer.invoke('entryLink:create', fromEntryId, toEntryId, linkType),
+    getByEntry: (entryId: string) => ipcRenderer.invoke('entryLink:getByEntry', entryId),
+    delete: (id: string) => ipcRenderer.invoke('entryLink:delete', id),
+  },
+  writingGoal: {
+    createOrUpdate: (novelId: string, date: string, targetWordCount: number) => ipcRenderer.invoke('writingGoal:createOrUpdate', novelId, date, targetWordCount),
+    getByNovel: (novelId: string) => ipcRenderer.invoke('writingGoal:getByNovel', novelId),
+    getByDate: (novelId: string, date: string) => ipcRenderer.invoke('writingGoal:getByDate', novelId, date),
+    updateActualCount: (id: string, count: number) => ipcRenderer.invoke('writingGoal:updateActualCount', id, count),
+    delete: (id: string) => ipcRenderer.invoke('writingGoal:delete', id),
   },
   export: {
     txt: () => ipcRenderer.invoke('export:txt'),

@@ -1,4 +1,4 @@
-import type { Novel, Volume, Chapter, Snapshot } from '@novel-writer/core';
+import type { Novel, Volume, Chapter, Snapshot, Character, CharacterRelation, WorldEntry, EntryLink, WritingGoal } from '@novel-writer/core';
 
 export interface NovelWriterAPI {
   novel: {
@@ -27,6 +27,42 @@ export interface NovelWriterAPI {
   snapshot: {
     create: (chapterId: string, content: string) => Promise<Snapshot>;
     getByChapter: (chapterId: string) => Promise<Snapshot[]>;
+    getById: (id: string) => Promise<Snapshot | undefined>;
+  };
+  character: {
+    create: (novelId: string, name: string) => Promise<Character>;
+    getByNovel: (novelId: string) => Promise<Character[]>;
+    getById: (id: string) => Promise<Character | undefined>;
+    update: (id: string, data: Partial<Character>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+    reorder: (ids: string[]) => Promise<void>;
+  };
+  characterRelation: {
+    create: (novelId: string, fromCharId: string, toCharId: string, relationType: string, description?: string) => Promise<CharacterRelation>;
+    getByNovel: (novelId: string) => Promise<CharacterRelation[]>;
+    getByCharacter: (characterId: string) => Promise<CharacterRelation[]>;
+    update: (id: string, data: Partial<CharacterRelation>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+  };
+  worldEntry: {
+    create: (novelId: string, name: string, category?: string) => Promise<WorldEntry>;
+    getByNovel: (novelId: string) => Promise<WorldEntry[]>;
+    getByCategory: (novelId: string, category: string) => Promise<WorldEntry[]>;
+    getById: (id: string) => Promise<WorldEntry | undefined>;
+    update: (id: string, data: Partial<WorldEntry>) => Promise<void>;
+    delete: (id: string) => Promise<void>;
+  };
+  entryLink: {
+    create: (fromEntryId: string, toEntryId: string, linkType?: string) => Promise<EntryLink>;
+    getByEntry: (entryId: string) => Promise<EntryLink[]>;
+    delete: (id: string) => Promise<void>;
+  };
+  writingGoal: {
+    createOrUpdate: (novelId: string, date: string, targetWordCount: number) => Promise<WritingGoal>;
+    getByNovel: (novelId: string) => Promise<WritingGoal[]>;
+    getByDate: (novelId: string, date: string) => Promise<WritingGoal | undefined>;
+    updateActualCount: (id: string, count: number) => Promise<void>;
+    delete: (id: string) => Promise<void>;
   };
   export: {
     txt: () => Promise<{ success: boolean; filePath?: string; error?: string }>;
