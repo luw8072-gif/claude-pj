@@ -1,5 +1,6 @@
-import { ipcMain } from 'electron';
+import { ipcMain, dialog } from 'electron';
 import { novelDao, volumeDao, chapterDao, snapshotDao } from '@novel-writer/core';
+import { exportTxt, exportEpub } from '@novel-writer/export';
 
 export function registerIpcHandlers(): void {
   // Novel CRUD
@@ -28,4 +29,33 @@ export function registerIpcHandlers(): void {
   // Snapshot
   ipcMain.handle('snapshot:create', (_e, chapterId: string, content: string) => snapshotDao.create(chapterId, content));
   ipcMain.handle('snapshot:getByChapter', (_e, chapterId: string) => snapshotDao.getByChapter(chapterId));
+
+  // Export
+  ipcMain.handle('export:txt', async () => {
+    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+    if (result.canceled) return { success: false, error: 'cancelled' };
+    const novels = novelDao.getAll();
+    if (novels.length === 0) return { success: false, error: 'no novels' };
+    const novel = novels[0];
+    const volumes = volumeDao.getByNovel(novel.id);
+    const chaptersByVolume: Record<string, import('@novel-writer/core').Chapter[]> = {};
+    for (const vol of volumes) {
+      chaptersByVolume[vol.id] = chapterDao.getByVolume(vol.id);
+    }
+    return exportTxt(novel, volumes, chaptersByVolume, result.filePaths[0]);
+  });
+
+  ipcMain.handle('export:epub', async () => {
+    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+    if (result.canceled) return { success: false, error: 'cancelled' };
+    const novels = novelDao.getAll();
+    if (novels.length === 0) return { success: false, error: 'no novels' };
+    const novel = novels[0];
+    const volumes = volumeDao.getByNovel(novel.id);
+    const chaptersByVolume: Record<string, import('@novel-writer/core').Chapter[]> = {};
+    for (const vol of volumes) {
+      chaptersByVolume[vol.id] = chapterDao.getByVolume(vol.id);
+    }
+    return exportEpub(novel, volumes, chaptersByVolume, result.filePaths[0]);
+  });
 }

@@ -28,6 +28,10 @@ export interface NovelWriterAPI {
     create: (chapterId: string, content: string) => Promise<Snapshot>;
     getByChapter: (chapterId: string) => Promise<Snapshot[]>;
   };
+  export: {
+    txt: () => Promise<{ success: boolean; filePath?: string; error?: string }>;
+    epub: () => Promise<{ success: boolean; filePath?: string; error?: string }>;
+  };
 }
 
 declare global {

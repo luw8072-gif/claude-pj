@@ -28,4 +28,8 @@ contextBridge.exposeInMainWorld('novelWriter', {
     create: (chapterId: string, content: string) => ipcRenderer.invoke('snapshot:create', chapterId, content),
     getByChapter: (chapterId: string) => ipcRenderer.invoke('snapshot:getByChapter', chapterId),
   },
+  export: {
+    txt: () => ipcRenderer.invoke('export:txt'),
+    epub: () => ipcRenderer.invoke('export:epub'),
+  },
 });
