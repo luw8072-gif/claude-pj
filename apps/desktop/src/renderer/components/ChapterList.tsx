@@ -6,6 +6,7 @@ export function ChapterList() {
   const { volumes, chapters, currentChapterId, selectChapter, createChapter, createVolume, deleteVolume, deleteChapter } = useNovelStore();
   const [newVolTitle, setNewVolTitle] = useState('');
   const [newChapVolId, setNewChapVolId] = useState<string | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<string | null>(null);
 
   const handleAddVolume = async () => {
     const title = newVolTitle.trim() || `卷 ${volumes.length + 1}`;
@@ -46,8 +47,41 @@ export function ChapterList() {
           {(chapters[vol.id] || []).map(chap => (
             <div
               key={chap.id}
-              className={`treeItem treeChapter ${chap.id === currentChapterId ? 'active' : ''}`}
+              className={`treeItem treeChapter ${chap.id === currentChapterId ? 'active' : ''} ${dragOverIndex === chap.id ? 'dragOver' : ''}`}
               onClick={() => selectChapter(chap.id)}
+              draggable
+              onDragStart={(e: React.DragEvent) => {
+                e.dataTransfer.setData('text/plain', chap.id);
+                e.dataTransfer.effectAllowed = 'move';
+              }}
+              onDragOver={(e: React.DragEvent) => {
+                e.preventDefault();
+                setDragOverIndex(chap.id);
+              }}
+              onDrop={async (e: React.DragEvent) => {
+                e.preventDefault();
+                const draggedId = e.dataTransfer.getData('text/plain');
+                if (draggedId && draggedId !== chap.id) {
+                  const volChapters = chapters[vol.id] || [];
+                  const ids = volChapters.map(c => c.id);
+                  const fromIdx = ids.indexOf(draggedId);
+                  const toIdx = ids.indexOf(chap.id);
+                  if (fromIdx !== -1 && toIdx !== -1) {
+                    ids.splice(fromIdx, 1);
+                    ids.splice(toIdx, 0, draggedId);
+                    await window.novelWriter.chapter.reorder(ids);
+                    const currentNovel = useNovelStore.getState().currentNovel;
+                    if (currentNovel) {
+                      const freshChapters = await window.novelWriter.chapter.getByVolume(vol.id);
+                      useNovelStore.setState({
+                        chapters: { ...useNovelStore.getState().chapters, [vol.id]: freshChapters }
+                      });
+                    }
+                  }
+                }
+                setDragOverIndex(null);
+              }}
+              onDragLeave={() => setDragOverIndex(null)}
             >
               <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {chap.title}

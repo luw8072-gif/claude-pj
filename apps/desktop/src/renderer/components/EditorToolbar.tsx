@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, showToast } from '@novel-writer/ui-shared';
+import { useNovelStore } from '../stores/novelStore.js';
 
 interface EditorToolbarProps {
   onToggleFocus: () => void;
@@ -9,6 +10,8 @@ interface EditorToolbarProps {
 }
 
 export function EditorToolbar({ onToggleFocus, onToggleReading, focusMode, readingMode }: EditorToolbarProps) {
+  const { setActiveSidebarTab } = useNovelStore();
+
   const handleExportTxt = async () => {
     const result = await window.novelWriter.export.txt();
     if (result.success) showToast('TXT 导出成功', 'success');
@@ -33,6 +36,9 @@ export function EditorToolbar({ onToggleFocus, onToggleReading, focusMode, readi
         </Button>
         <Button variant="ghost" size="sm" onClick={onToggleReading}>
           {readingMode ? '退出阅读' : '阅读模式'}
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => setActiveSidebarTab('snapshots')}>
+          版本历史
         </Button>
       </div>
       <div style={{ display: 'flex', gap: '4px' }}>

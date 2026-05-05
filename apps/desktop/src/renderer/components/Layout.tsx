@@ -5,11 +5,14 @@ import { ChapterList } from './ChapterList.js';
 import { EditorPanel } from './EditorPanel.js';
 import { EditorToolbar } from './EditorToolbar.js';
 import { StatusBar } from './StatusBar.js';
+import { SnapshotPanel } from './SnapshotPanel.js';
+import { CharacterPage } from '../pages/CharacterPage.js';
+import { WorldPage } from '../pages/WorldPage.js';
 import { useNovelStore } from '../stores/novelStore.js';
 
 export function Layout() {
   const navigate = useNavigate();
-  const { currentNovel } = useNovelStore();
+  const { currentNovel, activeSidebarTab, setActiveSidebarTab } = useNovelStore();
   const [focusMode, setFocusMode] = useState(false);
   const [readingMode, setReadingMode] = useState(false);
 
@@ -33,7 +36,16 @@ export function Layout() {
             {currentNovel?.title || '长篇写作'}
           </span>
         </div>
-        <ChapterList />
+        <div className="sidebarTabs">
+          <button onClick={() => setActiveSidebarTab('toc')} className={activeSidebarTab === 'toc' ? 'active' : ''}>目录</button>
+          <button onClick={() => setActiveSidebarTab('characters')} className={activeSidebarTab === 'characters' ? 'active' : ''}>角色</button>
+          <button onClick={() => setActiveSidebarTab('world')} className={activeSidebarTab === 'world' ? 'active' : ''}>世界观</button>
+          <button onClick={() => setActiveSidebarTab('snapshots')} className={activeSidebarTab === 'snapshots' ? 'active' : ''}>历史</button>
+        </div>
+        {activeSidebarTab === 'toc' && <ChapterList />}
+        {activeSidebarTab === 'characters' && <CharacterPage />}
+        {activeSidebarTab === 'world' && <WorldPage />}
+        {activeSidebarTab === 'snapshots' && <SnapshotPanel />}
       </div>
       <div className="mainArea">
         <EditorToolbar

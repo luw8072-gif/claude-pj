@@ -209,6 +209,39 @@ html, body, #root {
 ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
+/* === Sidebar Navigation Tabs === */
+.sidebarTabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.sidebarTabs button {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-textSecondary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.sidebarTabs button:hover {
+  color: var(--color-text);
+  background: #f5f5f5;
+}
+.sidebarTabs button.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* === Drag and Drop === */
+.treeItem.dragOver {
+  border-top: 2px solid var(--color-primary);
+  border-radius: 0;
+}
+
 /* === Transitions === */
 .fadeIn { animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
