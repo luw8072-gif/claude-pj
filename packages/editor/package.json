@@ -1,0 +1,19 @@
+{
+  "name": "@novel-writer/editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc", "dev": "tsc --watch" },
+  "dependencies": {
+    "@novel-writer/ui-shared": "*",
+    "@tiptap/core": "^2.11.0",
+    "@tiptap/react": "^2.11.0",
+    "@tiptap/starter-kit": "^2.11.0",
+    "@tiptap/extension-underline": "^2.11.0",
+    "@tiptap/extension-placeholder": "^2.11.0",
+    "@tiptap/extension-bubble-menu": "^2.11.0",
+    "react": "^19.0.0"
+  }
+}
