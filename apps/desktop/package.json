@@ -5,8 +5,10 @@
   "type": "module",
   "main": "./dist/main/index.js",
   "scripts": {
-    "dev": "tsc && electron .",
-    "build": "tsc",
+    "dev:main": "tsc -p tsconfig.main.json",
+    "dev:renderer": "vite build",
+    "dev": "npm run dev:main && npm run dev:renderer",
+    "build": "npm run dev:main && vite build",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -29,6 +31,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron-builder": "^25.0.0",
+    "vite": "^6.0.0",
+    "@vitejs/plugin-react": "^4.3.0"
   }
 }
