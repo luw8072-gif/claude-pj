@@ -42,18 +42,10 @@ export function EditorPanel({ focusMode, readingMode }: EditorPanelProps) {
 }
 
 function ReadingContentView({ content, title }: { content: string; title: string }) {
-  const stripHtml = (html: string) => {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || '';
-  };
-
   return (
     <div className="readingMode">
       <h1>{title}</h1>
-      {stripHtml(content).split('\n').map((line, i) => (
-        line.trim() ? <p key={i}>{line}</p> : <br key={i} />
-      ))}
+      <div dangerouslySetInnerHTML={{ __html: content }} />
     </div>
   );
 }
