@@ -9,6 +9,7 @@ export function CharacterPage() {
 
   useEffect(() => {
     if (currentNovel) loadCharacters(currentNovel.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNovel]);
 
   const handleCreate = async () => {

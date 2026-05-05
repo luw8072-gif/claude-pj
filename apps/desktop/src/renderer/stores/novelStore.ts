@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Novel, Volume, Chapter, Snapshot, Character, CharacterRelation, WorldEntry, EntryLink, WritingGoal } from '@novel-writer/core';
+import type { Novel, Volume, Chapter, Snapshot, Character, CharacterRelation, WorldEntry, WritingGoal } from '@novel-writer/core';
 
 interface NovelState {
   novels: Novel[];
@@ -12,7 +12,6 @@ interface NovelState {
   characters: Character[];
   characterRelations: CharacterRelation[];
   worldEntries: WorldEntry[];
-  entryLinks: EntryLink[];
   writingGoals: WritingGoal[];
   snapshots: Snapshot[];
   activeSidebarTab: 'toc' | 'characters' | 'world' | 'snapshots';
@@ -53,7 +52,6 @@ export const useNovelStore = create<NovelState>((set, get) => ({
   characters: [],
   characterRelations: [],
   worldEntries: [],
-  entryLinks: [],
   writingGoals: [],
   snapshots: [],
   activeSidebarTab: 'toc',
