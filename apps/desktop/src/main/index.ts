@@ -1,7 +1,11 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { runMigrations, closeDb, getDb } from '@novel-writer/core';
 import { registerIpcHandlers } from './ipc.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -12,7 +16,7 @@ function createWindow(): void {
     minWidth: 900,
     minHeight: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
     },
@@ -32,6 +36,8 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  // Set userData path for development (when using npx electron)
+  app.setPath('userData', path.join(app.getPath('appData'), 'novel-writer-desktop'));
   runMigrations(getDb());
   registerIpcHandlers();
   createWindow();

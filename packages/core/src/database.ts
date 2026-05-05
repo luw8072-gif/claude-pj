@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 import { app } from 'electron';
 
 let db: Database.Database | null = null;
@@ -11,7 +12,12 @@ export function getDbPath(): string {
 
 export function getDb(): Database.Database {
   if (!db) {
-    db = new Database(getDbPath());
+    const dbPath = getDbPath();
+    const dir = path.dirname(dbPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    db = new Database(dbPath);
     db.pragma('journal_mode = WAL');
     db.pragma('foreign_keys = ON');
   }
