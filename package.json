@@ -12,6 +12,7 @@
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
     "typescript": "^5.7.0"
   }
 }

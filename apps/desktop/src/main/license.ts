@@ -8,7 +8,9 @@ interface LicenseData {
   email?: string;
 }
 
-const LICENSE_PATH = path.join(app.getPath('userData'), 'license.json');
+function getLicensePath(): string {
+  return path.join(app.getPath('userData'), 'license.json');
+}
 
 function validateKeyFormat(key: string): boolean {
   const trimmed = key.trim().toUpperCase();
@@ -32,13 +34,13 @@ export function saveLicense(key: string, email?: string): void {
     activatedAt: new Date().toISOString(),
     email,
   };
-  fs.writeFileSync(LICENSE_PATH, JSON.stringify(data, null, 2));
+  fs.writeFileSync(getLicensePath(), JSON.stringify(data, null, 2));
 }
 
 export function loadLicense(): LicenseData | null {
   try {
-    if (fs.existsSync(LICENSE_PATH)) {
-      return JSON.parse(fs.readFileSync(LICENSE_PATH, 'utf-8'));
+    if (fs.existsSync(getLicensePath())) {
+      return JSON.parse(fs.readFileSync(getLicensePath(), 'utf-8'));
     }
   } catch { /* ignore */ }
   return null;
@@ -52,8 +54,8 @@ export function isActivated(): boolean {
 
 export function clearLicense(): void {
   try {
-    if (fs.existsSync(LICENSE_PATH)) {
-      fs.unlinkSync(LICENSE_PATH);
+    if (fs.existsSync(getLicensePath())) {
+      fs.unlinkSync(getLicensePath());
     }
   } catch { /* ignore */ }
 }

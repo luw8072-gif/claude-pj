@@ -79,23 +79,23 @@ export function TipTapEditor({
       {editable && (
         <div className="editorToolbar" role="toolbar" aria-label="Formatting toolbar">
           <button onClick={toggleBold} className={editor.isActive('bold') ? 'is-active' : ''} title="粗体">
-            <strong>B</strong>
+            <strong>粗</strong>
           </button>
           <button onClick={toggleItalic} className={editor.isActive('italic') ? 'is-active' : ''} title="斜体">
-            <em>I</em>
+            <em>斜</em>
           </button>
           <button onClick={toggleUnderline} className={editor.isActive('underline') ? 'is-active' : ''} title="下划线">
-            <span style={{ textDecoration: 'underline' }}>U</span>
+            <span style={{ textDecoration: 'underline' }}>下</span>
           </button>
           <span className="toolbarSeparator" />
           <button onClick={() => toggleHeading(1)} className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''} title="标题1">
-            H1
+            标题1
           </button>
           <button onClick={() => toggleHeading(2)} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''} title="标题2">
-            H2
+            标题2
           </button>
           <button onClick={() => toggleHeading(3)} className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''} title="标题3">
-            H3
+            标题3
           </button>
         </div>
       )}
@@ -103,14 +103,14 @@ export function TipTapEditor({
       {editor && (
         <BubbleMenu editor={editor} tippyOptions={{ duration: 150 }}>
           <div className="bubbleMenu">
-            <button onClick={toggleBold} className={editor.isActive('bold') ? 'is-active' : ''}>
-              <strong>B</strong>
+            <button onClick={toggleBold} className={editor.isActive('bold') ? 'is-active' : ''} title="粗体">
+              <strong>粗</strong>
             </button>
-            <button onClick={toggleItalic} className={editor.isActive('italic') ? 'is-active' : ''}>
-              <em>I</em>
+            <button onClick={toggleItalic} className={editor.isActive('italic') ? 'is-active' : ''} title="斜体">
+              <em>斜</em>
             </button>
-            <button onClick={toggleUnderline} className={editor.isActive('underline') ? 'is-active' : ''}>
-              <span style={{ textDecoration: 'underline' }}>U</span>
+            <button onClick={toggleUnderline} className={editor.isActive('underline') ? 'is-active' : ''} title="下划线">
+              <span style={{ textDecoration: 'underline' }}>下</span>
             </button>
           </div>
         </BubbleMenu>
